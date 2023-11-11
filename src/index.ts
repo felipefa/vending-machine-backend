@@ -1,15 +1,9 @@
 import 'dotenv/config';
-import admin from 'firebase-admin';
 
 import { fastifyApp } from './lib/fastify';
+import { createAccount } from './routes/createAccount';
 
-const serviceAccount = JSON.parse(
-  process.env.FIREBASE_SERVICE_ACCOUNT_KEY || ''
-);
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+fastifyApp.register(createAccount);
 
 fastifyApp.get('/', async (_, reply) => {
   return reply.send({ success: true, message: 'Vending machine is running!' });

@@ -1,0 +1,9 @@
+POST http://localhost:3000/createAccount
+Content-Type: application/json
+
+{
+  "email": "johndoe2@gmail.com",
+  "password": "123456",
+  "role": "seller",
+  "username": "johndoe"
+}

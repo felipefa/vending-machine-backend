@@ -1,3 +1,3 @@
-import { Firestore } from '@google-cloud/firestore';
+import { firebaseAdmin } from './firebaseAdmin';
 
-export const firestore = new Firestore();
+export const firestore = firebaseAdmin.firestore();
