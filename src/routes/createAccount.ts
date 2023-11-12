@@ -23,15 +23,27 @@ export async function createAccount(app: FastifyInstance) {
         password,
       });
 
+      const user = await firestore
+        .collection('users')
+        .where('username', '==', username)
+        .get();
+
+      if (!user.empty) {
+        return reply.code(400).send({
+          message: 'Account creation failed',
+          error: 'Username already exists',
+        });
+      }
+
       await firestore.collection('users').doc(userRecord.uid).set({
         email,
         username,
         role,
       });
 
-      reply.code(201).send({ message: 'Account creation successful' });
+      return reply.code(201).send({ message: 'Account creation successful' });
     } catch (error) {
-      reply.code(500).send({
+      return reply.code(500).send({
         message: 'Account creation failed',
         error: (error as Error).message,
       });
