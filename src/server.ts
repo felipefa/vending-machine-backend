@@ -19,3 +19,5 @@ fastifyApp.listen({ port }, (err, address) => {
 
   console.log(`Server listening on ${address}`);
 });
+
+export const server = fastifyApp;

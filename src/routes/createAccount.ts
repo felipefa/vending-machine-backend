@@ -31,9 +31,10 @@ export async function createAccount(app: FastifyInstance) {
 
       reply.code(201).send({ message: 'Account creation successful' });
     } catch (error) {
-      reply
-        .code(500)
-        .send({ message: 'Account creation failed', error: error.message });
+      reply.code(500).send({
+        message: 'Account creation failed',
+        error: (error as Error).message,
+      });
     }
   });
 }
