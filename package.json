@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch src/server.ts",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "author": "@felipefa",
   "dependencies": {
