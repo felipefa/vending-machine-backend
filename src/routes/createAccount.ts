@@ -35,10 +35,13 @@ export async function createAccount(app: FastifyInstance) {
         });
       }
 
-      await firestore.collection('users').doc(userRecord.uid).set({
+      await firestore.collection('users').doc(userRecord.uid).create({
+        createdAt: new Date(),
+        deposit: 0,
         email,
-        username,
+        id: userRecord.uid,
         role,
+        username,
       });
 
       return reply.code(201).send({ message: 'Account creation successful' });
