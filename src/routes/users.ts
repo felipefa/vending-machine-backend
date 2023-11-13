@@ -88,6 +88,38 @@ export async function users(app: FastifyInstance) {
     }
   );
 
+  app.patch(
+    '/users',
+    { preHandler: validateUserAuthorisation },
+    async (request: FastifyRequestWithUser, reply: FastifyReply) => {
+      try {
+        const bodySchema = z.object({
+          username: z.string(),
+        });
+
+        const { username } = bodySchema.parse(request.body);
+
+        const userId = request.userId;
+
+        if (!userId) {
+          return reply.status(400).send({ message: 'Missing user ID' });
+        }
+
+        await firestore
+          .collection('users')
+          .doc(userId)
+          .set({ username }, { merge: true });
+
+        return reply.status(200).send({ message: 'User updated successfully' });
+      } catch (error) {
+        return reply.status(500).send({
+          message: 'Failed to update user',
+          error: (error as Error).message,
+        });
+      }
+    }
+  );
+
   app.delete(
     '/users',
     { preHandler: validateUserAuthorisation },

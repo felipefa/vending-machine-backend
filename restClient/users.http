@@ -9,9 +9,18 @@ Content-Type: application/json
   "username": "test"
 }
 
-### Get specific user by id
+### Get user by id
 GET {{$dotenv BACKEND_URL}}/users/SBNztwoFRYWeg7lbg5SxT9qxB3Q2
 Authorization: Bearer {{$dotenv USER_ID_TOKEN}}
+
+### Update user signed in
+PATCH {{$dotenv BACKEND_URL}}/users
+Authorization: Bearer {{$dotenv USER_ID_TOKEN}}
+Content-Type: application/json
+
+{
+  "username": "test"
+}
 
 ### Delete user signed in
 DELETE {{$dotenv BACKEND_URL}}/users
