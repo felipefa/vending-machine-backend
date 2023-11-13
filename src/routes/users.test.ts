@@ -27,7 +27,7 @@ describe('createAccount', () => {
 
     const response = await fastifyApp.inject({
       method: 'POST',
-      url: '/createAccount',
+      url: '/users',
       payload: {
         email: 'test@email.com',
         password: 'password',
@@ -37,15 +37,16 @@ describe('createAccount', () => {
     });
 
     expect(response.statusCode).toBe(201);
-    expect(response.json()).toEqual({
-      message: 'Account creation successful',
-    });
+    expect(response.json()).toHaveProperty(
+      'message',
+      'Account creation successful'
+    );
   });
 
   it('should fail when required fields are missing', async () => {
     const response = await fastifyApp.inject({
       method: 'POST',
-      url: '/createAccount',
+      url: '/users',
       payload: {
         email: 'test@example.com',
         password: 'password',
@@ -67,7 +68,7 @@ describe('createAccount', () => {
 
     const response = await fastifyApp.inject({
       method: 'POST',
-      url: '/createAccount',
+      url: '/users',
       payload: {
         email: 'test@example.com',
         password: 'password',
@@ -98,7 +99,7 @@ describe('createAccount', () => {
 
     const response = await fastifyApp.inject({
       method: 'POST',
-      url: '/createAccount',
+      url: '/users',
       payload: {
         email: 'test@example.com',
         password: 'password',

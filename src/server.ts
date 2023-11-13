@@ -1,11 +1,11 @@
 import 'dotenv/config';
 
 import { fastifyApp } from './lib/fastify';
-import { createAccount } from './routes/createAccount';
 import { products } from './routes/products';
+import { users } from './routes/users';
 
-fastifyApp.register(createAccount);
 fastifyApp.register(products);
+fastifyApp.register(users);
 
 fastifyApp.get('/', async (_, reply) => {
   return reply.send({ success: true, message: 'Vending machine is running!' });

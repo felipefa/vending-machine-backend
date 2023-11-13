@@ -4,8 +4,8 @@ import { z } from 'zod';
 import { firebaseAdmin } from '../lib/firebaseAdmin';
 import { firestore } from '../lib/firestore';
 
-export async function createAccount(app: FastifyInstance) {
-  app.post('/createAccount', async (request, reply) => {
+export async function users(app: FastifyInstance) {
+  app.post('/users', async (request, reply) => {
     try {
       const bodySchema = z.object({
         email: z.string(),
