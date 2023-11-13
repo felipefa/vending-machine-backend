@@ -50,7 +50,7 @@ export async function deposit(app: FastifyInstance) {
 
         return reply.status(200).send({
           message: 'Coin successfully deposited',
-          newDeposit: deposit,
+          deposit,
         });
       } catch (error) {
         return reply.status(500).send({
