@@ -11,3 +11,14 @@ Content-Type: application/json
 ###
 
 GET http://localhost:3000/products
+
+###
+
+PATCH http://localhost:3000/products/npt1UDoJtKQ1ITPkI9a9
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "cost": 75,
+  "productName": "Test updated"
+}
