@@ -1,0 +1,8 @@
+### Deposit coin to signed in user
+POST {{$dotenv BACKEND_URL}}/deposit
+Authorization: Bearer {{$dotenv USER_ID_TOKEN}}
+Content-Type: application/json
+
+{
+  "coin": 50
+}
