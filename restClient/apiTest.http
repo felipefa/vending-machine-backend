@@ -1,1 +1,2 @@
+### Test if the backend is running
 GET {{$dotenv BACKEND_URL}}

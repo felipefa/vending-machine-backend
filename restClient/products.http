@@ -1,3 +1,4 @@
+# Create new product
 POST {{$dotenv BACKEND_URL}}/products
 Authorization: Bearer {{$dotenv USER_ID_TOKEN}}
 Content-Type: application/json
@@ -8,16 +9,13 @@ Content-Type: application/json
   "productName": "Test product"
 }
 
-###
-
+### Get all products
 GET {{$dotenv BACKEND_URL}}/products
 
-###
-
+### Get product by id
 GET {{$dotenv BACKEND_URL}}/products/npt1UDoJtKQ1ITPkI9a9
 
-###
-
+### Update product by id
 PATCH {{$dotenv BACKEND_URL}}/products/npt1UDoJtKQ1ITPkI9a9
 Authorization: Bearer {{$dotenv USER_ID_TOKEN}}
 Content-Type: application/json
@@ -27,7 +25,6 @@ Content-Type: application/json
   "productName": "Test updated"
 }
 
-###
-
+### Delete product by id
 DELETE {{$dotenv BACKEND_URL}}/products/vfkjIE2mhggNWGQnFzq3
 Authorization: Bearer {{$dotenv USER_ID_TOKEN}}
