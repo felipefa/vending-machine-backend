@@ -1,0 +1,9 @@
+POST http://localhost:3000/products
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "amountAvailable": 100,
+  "cost": 100,
+  "productName": "Test"
+}
