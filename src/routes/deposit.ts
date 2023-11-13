@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyRequestWithUser } from 'fastify';
 import { z } from 'zod';
 
-import { firebaseAuth, firestore } from '../lib/firebase';
+import { firestore } from '../lib/firebase';
 import { validateUserAuthorisation } from '../lib/validateUserAuthorisation';
 
 export async function deposit(app: FastifyInstance) {
