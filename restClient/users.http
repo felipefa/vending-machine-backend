@@ -1,14 +1,18 @@
+### Create user (new account)
 POST {{$dotenv BACKEND_URL}}/users
 Content-Type: application/json
 
 {
-  "email": "johndoe@gmail.com",
+  "email": "test@email.com",
   "password": "123456",
   "role": "seller",
-  "username": "johndoe"
+  "username": "test"
 }
 
-###
+### Get specific user by id
+GET {{$dotenv BACKEND_URL}}/users/SBNztwoFRYWeg7lbg5SxT9qxB3Q2
+Authorization: Bearer {{$dotenv USER_ID_TOKEN}}
 
-GET {{$dotenv BACKEND_URL}}/users/9QN39FZJRJZTDcYUkoleIvrVJ4A3
+### Delete user signed in
+DELETE {{$dotenv BACKEND_URL}}/users
 Authorization: Bearer {{$dotenv USER_ID_TOKEN}}

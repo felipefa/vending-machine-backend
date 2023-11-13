@@ -13,10 +13,10 @@ Content-Type: application/json
 GET {{$dotenv BACKEND_URL}}/products
 
 ### Get product by id
-GET {{$dotenv BACKEND_URL}}/products/npt1UDoJtKQ1ITPkI9a9
+GET {{$dotenv BACKEND_URL}}/products/Qni6hkAA6wbHtQTsTMa5
 
 ### Update product by id
-PATCH {{$dotenv BACKEND_URL}}/products/npt1UDoJtKQ1ITPkI9a9
+PATCH {{$dotenv BACKEND_URL}}/products/Qni6hkAA6wbHtQTsTMa5
 Authorization: Bearer {{$dotenv USER_ID_TOKEN}}
 Content-Type: application/json
 
@@ -26,5 +26,5 @@ Content-Type: application/json
 }
 
 ### Delete product by id
-DELETE {{$dotenv BACKEND_URL}}/products/vfkjIE2mhggNWGQnFzq3
+DELETE {{$dotenv BACKEND_URL}}/products/Qni6hkAA6wbHtQTsTMa5
 Authorization: Bearer {{$dotenv USER_ID_TOKEN}}

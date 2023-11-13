@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyRequestWithUser } from 'fastify';
+import { FastifyInstance, FastifyReply, FastifyRequestWithUser } from 'fastify';
 import { z } from 'zod';
 
 import { firebaseAdmin, firestore } from '../lib/firebase';
@@ -84,6 +84,42 @@ export async function users(app: FastifyInstance) {
           .send({ message: 'User found', user: userDoc.data() });
       } catch (error) {
         return reply.status(500).send({ message: 'Failed to get user', error });
+      }
+    }
+  );
+
+  app.delete(
+    '/users',
+    { preHandler: validateUserAuthorisation },
+    async (request: FastifyRequestWithUser, reply: FastifyReply) => {
+      try {
+        const userId = request.userId;
+
+        if (!userId) {
+          return reply.status(400).send({ message: 'Missing user ID' });
+        }
+
+        const batch = firestore.batch();
+
+        const productsSnapshot = await firestore
+          .collection('products')
+          .where('sellerId', '==', userId)
+          .get();
+
+        productsSnapshot.docs.forEach((doc) => {
+          batch.delete(doc.ref);
+        });
+
+        await batch.commit();
+
+        await firestore.collection('users').doc(userId).delete();
+
+        return reply.status(200).send({ message: 'User deleted' });
+      } catch (error) {
+        return reply.status(500).send({
+          message: 'Something went wrong while deleting user',
+          error: (error as Error).message,
+        });
       }
     }
   );
