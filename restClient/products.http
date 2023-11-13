@@ -14,6 +14,10 @@ GET {{$dotenv BACKEND_URL}}/products
 
 ###
 
+GET {{$dotenv BACKEND_URL}}/products/npt1UDoJtKQ1ITPkI9a9
+
+###
+
 PATCH {{$dotenv BACKEND_URL}}/products/npt1UDoJtKQ1ITPkI9a9
 Authorization: Bearer {{$dotenv USER_ID_TOKEN}}
 Content-Type: application/json

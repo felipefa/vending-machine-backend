@@ -1,4 +1,9 @@
-import { FastifyInstance, FastifyReply, FastifyRequestWithUser } from 'fastify';
+import {
+  FastifyInstance,
+  FastifyReply,
+  FastifyRequest,
+  FastifyRequestWithUser,
+} from 'fastify';
 import { z } from 'zod';
 
 import { firestore } from '../lib/firebase';
@@ -85,6 +90,41 @@ export const products = async (app: FastifyInstance) => {
         .send({ message: 'Failed to get products', error });
     }
   });
+
+  app.get(
+    '/products/:id',
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      try {
+        const paramsSchema = z.object({
+          id: z.string(),
+        });
+
+        const params = paramsSchema.parse(request.params);
+        const productId = params.id;
+
+        if (!productId) {
+          return reply.status(400).send({ message: 'Missing product ID' });
+        }
+
+        const productDoc = await firestore
+          .collection('products')
+          .doc(productId)
+          .get();
+
+        if (!productDoc.exists) {
+          return reply.status(404).send({ message: 'Product not found' });
+        }
+
+        return reply
+          .status(200)
+          .send({ message: 'Product found', product: productDoc.data() });
+      } catch (error) {
+        return reply
+          .status(500)
+          .send({ message: 'Failed to get product', error });
+      }
+    }
+  );
 
   app.patch(
     '/products/:id',
