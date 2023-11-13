@@ -1,0 +1,3 @@
+### Reset the signed in user's deposit amount
+POST {{$dotenv BACKEND_URL}}/reset
+Authorization: Bearer {{$dotenv USER_ID_TOKEN}}

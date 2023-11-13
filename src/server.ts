@@ -4,11 +4,13 @@ import { fastifyApp } from './lib/fastify';
 import { deposit } from './routes/deposit';
 import { login } from './routes/login';
 import { products } from './routes/products';
+import { reset } from './routes/reset';
 import { users } from './routes/users';
 
 fastifyApp.register(deposit);
 fastifyApp.register(login);
 fastifyApp.register(products);
+fastifyApp.register(reset);
 fastifyApp.register(users);
 
 fastifyApp.get('/', async (_, reply) => {
