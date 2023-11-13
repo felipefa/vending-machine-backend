@@ -7,3 +7,7 @@ Content-Type: application/json
   "cost": 100,
   "productName": "Test"
 }
+
+###
+
+GET http://localhost:3000/products

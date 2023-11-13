@@ -68,4 +68,21 @@ export const products = async (app: FastifyInstance) => {
       }
     }
   );
+
+  app.get('/products', async (_, reply: FastifyReply) => {
+    try {
+      const products: Product[] = [];
+      const snapshot = await firestore.collection('products').get();
+
+      snapshot.forEach((doc) => {
+        products.push({ id: doc.id, ...doc.data() } as Product);
+      });
+
+      return reply.status(200).send({ message: 'Products found', products });
+    } catch (error) {
+      return reply
+        .status(500)
+        .send({ message: 'Failed to get products', error });
+    }
+  });
 };
