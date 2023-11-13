@@ -4,7 +4,7 @@ import fastify from 'fastify';
 const app = fastify();
 
 app.register(fastifyCors, {
-  origin: '*',
+  origin: process.env.FRONTEND_URL,
 });
 
 export const fastifyApp = app;
