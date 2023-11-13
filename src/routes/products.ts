@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequestWithUser } from 'fastify';
 import { z } from 'zod';
 
-import { firestore } from '../lib/firestore';
+import { firestore } from '../lib/firebase';
 import { validateUserAuthorisation } from '../lib/validateUserAuthorisation';
 
 interface Product {

@@ -1,9 +1,11 @@
 import 'dotenv/config';
 
 import { fastifyApp } from './lib/fastify';
+import { login } from './routes/login';
 import { products } from './routes/products';
 import { users } from './routes/users';
 
+fastifyApp.register(login);
 fastifyApp.register(products);
 fastifyApp.register(users);
 

@@ -1,0 +1,7 @@
+POST {{$dotenv BACKEND_URL}}/login
+Content-Type: application/json
+
+{
+  "email": "johndoe@gmail.com",
+  "password": "123456"
+}

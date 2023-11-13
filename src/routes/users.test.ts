@@ -1,8 +1,7 @@
 import 'dotenv/config';
 import { UserRecord } from 'firebase-admin/lib/auth/user-record';
 
-import { firebaseAdmin } from '../lib/firebaseAdmin';
-import { firestore } from '../lib/firestore';
+import { firebaseAdmin, firestore } from '../lib/firebase';
 
 import { server as fastifyApp } from '../server';
 

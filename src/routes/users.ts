@@ -1,8 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 
-import { firebaseAdmin } from '../lib/firebaseAdmin';
-import { firestore } from '../lib/firestore';
+import { firebaseAdmin, firestore } from '../lib/firebase';
 
 export async function users(app: FastifyInstance) {
   app.post('/users', async (request, reply) => {

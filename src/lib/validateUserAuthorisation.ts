@@ -1,6 +1,6 @@
-import { FastifyReply, FastifyRequest, FastifyRequestWithUser } from 'fastify';
+import { FastifyReply, FastifyRequestWithUser } from 'fastify';
 
-import { firebaseAdmin } from './firebaseAdmin';
+import { firebaseAdmin } from './firebase';
 
 export async function validateUserAuthorisation(
   request: FastifyRequestWithUser,
@@ -13,7 +13,7 @@ export async function validateUserAuthorisation(
         .send({ message: 'Missing authorization header' });
     }
 
-    const token = request.headers.authorization.split(' ')[1];
+    const token = request.headers.authorization.replace('Bearer', '').trim();
     const decodedToken = await firebaseAdmin.auth().verifyIdToken(token);
 
     request.userId = decodedToken.uid;

@@ -1,21 +1,21 @@
-POST http://localhost:3000/products
-Authorization: Bearer <token>
+POST {{$dotenv BACKEND_URL}}/products
+Authorization: Bearer {{$dotenv USER_ID_TOKEN}}
 Content-Type: application/json
 
 {
   "amountAvailable": 100,
   "cost": 100,
-  "productName": "Test"
+  "productName": "Test product"
 }
 
 ###
 
-GET http://localhost:3000/products
+GET {{$dotenv BACKEND_URL}}/products
 
 ###
 
-PATCH http://localhost:3000/products/npt1UDoJtKQ1ITPkI9a9
-Authorization: Bearer <token>
+PATCH {{$dotenv BACKEND_URL}}/products/npt1UDoJtKQ1ITPkI9a9
+Authorization: Bearer {{$dotenv USER_ID_TOKEN}}
 Content-Type: application/json
 
 {
@@ -25,5 +25,5 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3000/products/vfkjIE2mhggNWGQnFzq3
-Authorization: Bearer <token>
+DELETE {{$dotenv BACKEND_URL}}/products/vfkjIE2mhggNWGQnFzq3
+Authorization: Bearer {{$dotenv USER_ID_TOKEN}}
