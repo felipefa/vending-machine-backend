@@ -1,7 +1,8 @@
-import { FastifyInstance } from 'fastify';
+import { FastifyInstance, FastifyRequestWithUser } from 'fastify';
 import { z } from 'zod';
 
 import { firebaseAdmin, firestore } from '../lib/firebase';
+import { validateUserAuthorisation } from '../lib/validateUserAuthorisation';
 
 export async function users(app: FastifyInstance) {
   app.post('/users', async (request, reply) => {
@@ -55,4 +56,35 @@ export async function users(app: FastifyInstance) {
       });
     }
   });
+
+  app.get(
+    '/users/:id',
+    { preHandler: validateUserAuthorisation },
+    async (request: FastifyRequestWithUser, reply) => {
+      try {
+        const paramsSchema = z.object({
+          id: z.string(),
+        });
+
+        const params = paramsSchema.parse(request.params);
+        const userId = params.id;
+
+        if (!userId) {
+          return reply.status(400).send({ message: 'Missing user ID' });
+        }
+
+        const userDoc = await firestore.collection('users').doc(userId).get();
+
+        if (!userDoc.exists) {
+          return reply.status(404).send({ message: 'User not found' });
+        }
+
+        return reply
+          .status(200)
+          .send({ message: 'User found', user: userDoc.data() });
+      } catch (error) {
+        return reply.status(500).send({ message: 'Failed to get user', error });
+      }
+    }
+  );
 }

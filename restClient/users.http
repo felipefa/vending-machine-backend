@@ -7,3 +7,8 @@ Content-Type: application/json
   "role": "seller",
   "username": "johndoe"
 }
+
+###
+
+GET {{$dotenv BACKEND_URL}}/users/9QN39FZJRJZTDcYUkoleIvrVJ4A3
+Authorization: Bearer {{$dotenv USER_ID_TOKEN}}
