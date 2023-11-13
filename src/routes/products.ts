@@ -175,4 +175,59 @@ export const products = async (app: FastifyInstance) => {
       }
     }
   );
+
+  app.delete(
+    '/products/:id',
+    { preHandler: validateUserAuthorisation },
+    async (request: FastifyRequestWithUser, reply: FastifyReply) => {
+      try {
+        const paramsSchema = z.object({
+          id: z.string(),
+        });
+
+        const params = paramsSchema.parse(request.params);
+
+        if (!params.id) {
+          return reply.status(400).send({ message: 'Missing product ID' });
+        }
+
+        const productId = params.id;
+        const sellerId = request.userId;
+
+        if (!sellerId) {
+          return reply.status(400).send({ message: 'Missing seller ID' });
+        }
+
+        const seller = (
+          await firestore.collection('users').doc(sellerId).get()
+        ).data();
+
+        if (seller?.role !== 'seller') {
+          return reply.status(401).send({ message: 'User is not a seller' });
+        }
+
+        const productDoc = await firestore
+          .collection('products')
+          .doc(productId)
+          .get();
+
+        if (!productDoc.exists) {
+          return reply.status(404).send({ message: 'Product not found' });
+        } else if (productDoc.data()?.sellerId !== sellerId) {
+          return reply
+            .status(403)
+            .send({ message: `Product doesn't belong to seller` });
+        } else {
+          await firestore.collection('products').doc(productId).delete();
+
+          return reply.status(200).send({ message: 'Product deleted' });
+        }
+      } catch (error) {
+        return reply.status(500).send({
+          message: 'Something went wrong when deleting product',
+          error: (error as Error).message,
+        });
+      }
+    }
+  );
 };
