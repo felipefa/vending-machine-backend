@@ -1,0 +1,9 @@
+### Buy a determined amount of a product
+POST {{$dotenv BACKEND_URL}}/buy
+Authorization: Bearer {{$dotenv USER_ID_TOKEN}}
+Content-Type: application/json
+
+{
+  "productAmount": 1,
+  "productId": "Qni6hkAA6wbHtQTsTMa5"
+}
