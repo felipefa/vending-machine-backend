@@ -1,27 +1,24 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.products = void 0;
-const zod_1 = require("zod");
-const firebase_1 = require("../lib/firebase");
-const validateUserAuthorisation_1 = require("../lib/validateUserAuthorisation");
-const products = async (app) => {
-    app.post('/products', { preHandler: validateUserAuthorisation_1.validateUserAuthorisation }, async (request, reply) => {
+import { z } from 'zod';
+import { firestore } from '../lib/firebase';
+import { validateUserAuthorisation } from '../lib/validateUserAuthorisation';
+export const products = async (app) => {
+    app.post('/products', { preHandler: validateUserAuthorisation }, async (request, reply) => {
         try {
-            const bodySchema = zod_1.z.object({
-                amountAvailable: zod_1.z.number(),
-                cost: zod_1.z.number(),
-                productName: zod_1.z.string(),
+            const bodySchema = z.object({
+                amountAvailable: z.number(),
+                cost: z.number(),
+                productName: z.string(),
             });
             const { amountAvailable, cost, productName } = bodySchema.parse(request.body);
             const sellerId = request.userId;
             if (!sellerId) {
                 return reply.status(400).send({ message: 'Missing seller ID' });
             }
-            const seller = (await firebase_1.firestore.collection('users').doc(sellerId).get()).data();
-            if ((seller === null || seller === void 0 ? void 0 : seller.role) !== 'seller') {
+            const seller = (await firestore.collection('users').doc(sellerId).get()).data();
+            if (seller?.role !== 'seller') {
                 return reply.status(401).send({ message: 'User is not a seller' });
             }
-            const productRef = await firebase_1.firestore.collection('products').add({
+            const productRef = await firestore.collection('products').add({
                 amountAvailable,
                 cost,
                 productName,
@@ -48,7 +45,7 @@ const products = async (app) => {
     app.get('/products', async (_, reply) => {
         try {
             const products = [];
-            const snapshot = await firebase_1.firestore.collection('products').get();
+            const snapshot = await firestore.collection('products').get();
             snapshot.forEach((doc) => {
                 products.push({ id: doc.id, ...doc.data() });
             });
@@ -62,15 +59,15 @@ const products = async (app) => {
     });
     app.get('/products/:id', async (request, reply) => {
         try {
-            const paramsSchema = zod_1.z.object({
-                id: zod_1.z.string(),
+            const paramsSchema = z.object({
+                id: z.string(),
             });
             const params = paramsSchema.parse(request.params);
             const productId = params.id;
             if (!productId) {
                 return reply.status(400).send({ message: 'Missing product ID' });
             }
-            const productDoc = await firebase_1.firestore
+            const productDoc = await firestore
                 .collection('products')
                 .doc(productId)
                 .get();
@@ -87,20 +84,19 @@ const products = async (app) => {
                 .send({ message: 'Failed to get product', error });
         }
     });
-    app.patch('/products/:id', { preHandler: validateUserAuthorisation_1.validateUserAuthorisation }, async (request, reply) => {
-        var _a;
+    app.patch('/products/:id', { preHandler: validateUserAuthorisation }, async (request, reply) => {
         try {
-            const paramsSchema = zod_1.z.object({
-                id: zod_1.z.string(),
+            const paramsSchema = z.object({
+                id: z.string(),
             });
             const params = paramsSchema.parse(request.params);
             if (!params.id) {
                 return reply.status(400).send({ message: 'Missing product ID' });
             }
-            const bodySchema = zod_1.z.object({
-                amountAvailable: zod_1.z.number().optional(),
-                cost: zod_1.z.number().optional(),
-                productName: zod_1.z.string().optional(),
+            const bodySchema = z.object({
+                amountAvailable: z.number().optional(),
+                cost: z.number().optional(),
+                productName: z.string().optional(),
             });
             const { amountAvailable, cost, productName } = bodySchema.parse(request.body);
             if (!amountAvailable && !cost && !productName) {
@@ -113,18 +109,18 @@ const products = async (app) => {
             if (!sellerId) {
                 return reply.status(400).send({ message: 'Missing seller ID' });
             }
-            const seller = (await firebase_1.firestore.collection('users').doc(sellerId).get()).data();
-            if ((seller === null || seller === void 0 ? void 0 : seller.role) !== 'seller') {
+            const seller = (await firestore.collection('users').doc(sellerId).get()).data();
+            if (seller?.role !== 'seller') {
                 return reply.status(401).send({ message: 'User is not a seller' });
             }
-            const productDoc = await firebase_1.firestore
+            const productDoc = await firestore
                 .collection('products')
                 .doc(productId)
                 .get();
             if (!productDoc.exists) {
                 return reply.status(404).send({ message: 'Product not found' });
             }
-            else if (((_a = productDoc.data()) === null || _a === void 0 ? void 0 : _a.sellerId) !== sellerId) {
+            else if (productDoc.data()?.sellerId !== sellerId) {
                 return reply
                     .status(403)
                     .send({ message: `Product doesn't belong to seller` });
@@ -135,7 +131,7 @@ const products = async (app) => {
                     ...(cost && { cost }),
                     ...(productName && { productName }),
                 };
-                await firebase_1.firestore
+                await firestore
                     .collection('products')
                     .doc(productId)
                     .set(updatedProperties, { merge: true });
@@ -158,11 +154,10 @@ const products = async (app) => {
             });
         }
     });
-    app.delete('/products/:id', { preHandler: validateUserAuthorisation_1.validateUserAuthorisation }, async (request, reply) => {
-        var _a;
+    app.delete('/products/:id', { preHandler: validateUserAuthorisation }, async (request, reply) => {
         try {
-            const paramsSchema = zod_1.z.object({
-                id: zod_1.z.string(),
+            const paramsSchema = z.object({
+                id: z.string(),
             });
             const params = paramsSchema.parse(request.params);
             if (!params.id) {
@@ -173,24 +168,24 @@ const products = async (app) => {
             if (!sellerId) {
                 return reply.status(400).send({ message: 'Missing seller ID' });
             }
-            const seller = (await firebase_1.firestore.collection('users').doc(sellerId).get()).data();
-            if ((seller === null || seller === void 0 ? void 0 : seller.role) !== 'seller') {
+            const seller = (await firestore.collection('users').doc(sellerId).get()).data();
+            if (seller?.role !== 'seller') {
                 return reply.status(401).send({ message: 'User is not a seller' });
             }
-            const productDoc = await firebase_1.firestore
+            const productDoc = await firestore
                 .collection('products')
                 .doc(productId)
                 .get();
             if (!productDoc.exists) {
                 return reply.status(404).send({ message: 'Product not found' });
             }
-            else if (((_a = productDoc.data()) === null || _a === void 0 ? void 0 : _a.sellerId) !== sellerId) {
+            else if (productDoc.data()?.sellerId !== sellerId) {
                 return reply
                     .status(403)
                     .send({ message: `Product doesn't belong to seller` });
             }
             else {
-                await firebase_1.firestore.collection('products').doc(productId).delete();
+                await firestore.collection('products').doc(productId).delete();
                 return reply.status(200).send({ message: 'Product deleted' });
             }
         }
@@ -202,4 +197,3 @@ const products = async (app) => {
         }
     });
 };
-exports.products = products;

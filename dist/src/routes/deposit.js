@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.deposit = void 0;
-const zod_1 = require("zod");
-const firebase_1 = require("../lib/firebase");
-const validateUserAuthorisation_1 = require("../lib/validateUserAuthorisation");
-async function deposit(app) {
-    app.post('/deposit', { preHandler: validateUserAuthorisation_1.validateUserAuthorisation }, async (request, reply) => {
+import { z } from 'zod';
+import { firestore } from '../lib/firebase';
+import { validateUserAuthorisation } from '../lib/validateUserAuthorisation';
+export async function deposit(app) {
+    app.post('/deposit', { preHandler: validateUserAuthorisation }, async (request, reply) => {
         try {
-            const bodySchema = zod_1.z.object({
-                coin: zod_1.z.number().int().positive(),
+            const bodySchema = z.object({
+                coin: z.number().int().positive(),
             });
             const { coin } = bodySchema.parse(request.body);
             const userId = request.userId;
@@ -23,15 +20,15 @@ async function deposit(app) {
                     coin,
                 });
             }
-            const userDoc = await firebase_1.firestore.collection('users').doc(userId).get();
+            const userDoc = await firestore.collection('users').doc(userId).get();
             const user = userDoc.data();
-            if ((user === null || user === void 0 ? void 0 : user.role) !== 'buyer') {
+            if (user?.role !== 'buyer') {
                 return reply.status(403).send({
                     message: 'User is not a buyer',
                 });
             }
-            const deposit = ((user === null || user === void 0 ? void 0 : user.deposit) || 0) + coin;
-            await firebase_1.firestore
+            const deposit = (user?.deposit || 0) + coin;
+            await firestore
                 .collection('users')
                 .doc(userId)
                 .set({ deposit }, { merge: true });
@@ -48,4 +45,3 @@ async function deposit(app) {
         }
     });
 }
-exports.deposit = deposit;

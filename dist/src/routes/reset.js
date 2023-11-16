@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.reset = void 0;
-const firebase_1 = require("../lib/firebase");
-const validateUserAuthorisation_1 = require("../lib/validateUserAuthorisation");
-async function reset(app) {
-    app.post('/reset', { preHandler: validateUserAuthorisation_1.validateUserAuthorisation }, async (request, reply) => {
+import { firestore } from '../lib/firebase';
+import { validateUserAuthorisation } from '../lib/validateUserAuthorisation';
+export async function reset(app) {
+    app.post('/reset', { preHandler: validateUserAuthorisation }, async (request, reply) => {
         try {
             const userId = request.userId;
             if (!userId) {
@@ -12,14 +9,14 @@ async function reset(app) {
                     message: 'User is not signed in',
                 });
             }
-            const userDoc = await firebase_1.firestore.collection('users').doc(userId).get();
+            const userDoc = await firestore.collection('users').doc(userId).get();
             const user = userDoc.data();
-            if ((user === null || user === void 0 ? void 0 : user.role) !== 'buyer') {
+            if (user?.role !== 'buyer') {
                 return reply.status(403).send({
                     message: 'User is not a buyer',
                 });
             }
-            await firebase_1.firestore
+            await firestore
                 .collection('users')
                 .doc(userId)
                 .set({ deposit: 0 }, { merge: true });
@@ -36,4 +33,3 @@ async function reset(app) {
         }
     });
 }
-exports.reset = reset;

@@ -2,13 +2,14 @@
   "name": "vending-machine-backend",
   "version": "1.0.0",
   "description": "Backend for a vending machine app",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch src/server.ts",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "start": "node dist/server.js"
+    "start": "node dist/src/server.js"
   },
   "author": "@felipefa",
   "dependencies": {

@@ -1,24 +1,21 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.users = void 0;
-const zod_1 = require("zod");
-const firebase_1 = require("../lib/firebase");
-const validateUserAuthorisation_1 = require("../lib/validateUserAuthorisation");
-async function users(app) {
+import { z } from 'zod';
+import { firebaseAdmin, firestore } from '../lib/firebase';
+import { validateUserAuthorisation } from '../lib/validateUserAuthorisation';
+export async function users(app) {
     app.post('/users', async (request, reply) => {
         try {
-            const bodySchema = zod_1.z.object({
-                email: zod_1.z.string(),
-                password: zod_1.z.string(),
-                role: zod_1.z.enum(['buyer', 'seller']),
-                username: zod_1.z.string(),
+            const bodySchema = z.object({
+                email: z.string(),
+                password: z.string(),
+                role: z.enum(['buyer', 'seller']),
+                username: z.string(),
             });
             const { email, password, role, username } = bodySchema.parse(request.body);
-            const userRecord = await firebase_1.firebaseAdmin.auth().createUser({
+            const userRecord = await firebaseAdmin.auth().createUser({
                 email,
                 password,
             });
-            const possibleUser = await firebase_1.firestore
+            const possibleUser = await firestore
                 .collection('users')
                 .where('username', '==', username)
                 .get();
@@ -36,7 +33,7 @@ async function users(app) {
                 role,
                 username,
             };
-            await firebase_1.firestore.collection('users').doc(userRecord.uid).create(user);
+            await firestore.collection('users').doc(userRecord.uid).create(user);
             return reply
                 .status(201)
                 .send({ message: 'Account creation successful', user });
@@ -48,17 +45,17 @@ async function users(app) {
             });
         }
     });
-    app.get('/users/:id', { preHandler: validateUserAuthorisation_1.validateUserAuthorisation }, async (request, reply) => {
+    app.get('/users/:id', { preHandler: validateUserAuthorisation }, async (request, reply) => {
         try {
-            const paramsSchema = zod_1.z.object({
-                id: zod_1.z.string(),
+            const paramsSchema = z.object({
+                id: z.string(),
             });
             const params = paramsSchema.parse(request.params);
             const userId = params.id;
             if (!userId) {
                 return reply.status(400).send({ message: 'Missing user ID' });
             }
-            const userDoc = await firebase_1.firestore.collection('users').doc(userId).get();
+            const userDoc = await firestore.collection('users').doc(userId).get();
             if (!userDoc.exists) {
                 return reply.status(404).send({ message: 'User not found' });
             }
@@ -70,17 +67,17 @@ async function users(app) {
             return reply.status(500).send({ message: 'Failed to get user', error });
         }
     });
-    app.patch('/users', { preHandler: validateUserAuthorisation_1.validateUserAuthorisation }, async (request, reply) => {
+    app.patch('/users', { preHandler: validateUserAuthorisation }, async (request, reply) => {
         try {
-            const bodySchema = zod_1.z.object({
-                username: zod_1.z.string(),
+            const bodySchema = z.object({
+                username: z.string(),
             });
             const { username } = bodySchema.parse(request.body);
             const userId = request.userId;
             if (!userId) {
                 return reply.status(400).send({ message: 'Missing user ID' });
             }
-            await firebase_1.firestore
+            await firestore
                 .collection('users')
                 .doc(userId)
                 .set({ username }, { merge: true });
@@ -93,14 +90,14 @@ async function users(app) {
             });
         }
     });
-    app.delete('/users', { preHandler: validateUserAuthorisation_1.validateUserAuthorisation }, async (request, reply) => {
+    app.delete('/users', { preHandler: validateUserAuthorisation }, async (request, reply) => {
         try {
             const userId = request.userId;
             if (!userId) {
                 return reply.status(400).send({ message: 'Missing user ID' });
             }
-            const batch = firebase_1.firestore.batch();
-            const productsSnapshot = await firebase_1.firestore
+            const batch = firestore.batch();
+            const productsSnapshot = await firestore
                 .collection('products')
                 .where('sellerId', '==', userId)
                 .get();
@@ -108,7 +105,7 @@ async function users(app) {
                 batch.delete(doc.ref);
             });
             await batch.commit();
-            await firebase_1.firestore.collection('users').doc(userId).delete();
+            await firestore.collection('users').doc(userId).delete();
             return reply.status(200).send({ message: 'User deleted' });
         }
         catch (error) {
@@ -119,4 +116,3 @@ async function users(app) {
         }
     });
 }
-exports.users = users;

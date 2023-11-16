@@ -1,24 +1,21 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = void 0;
-const auth_1 = require("firebase/auth");
-const zod_1 = require("zod");
-const firebase_1 = require("../lib/firebase");
-async function login(app) {
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { z } from 'zod';
+import { firebaseAuth, firestore } from '../lib/firebase';
+export async function login(app) {
     app.post('/login', async (request, reply) => {
-        var _a;
         try {
-            const bodySchema = zod_1.z.object({
-                email: zod_1.z.string(),
-                password: zod_1.z.string(),
+            const bodySchema = z.object({
+                email: z.string(),
+                password: z.string(),
             });
             const { email, password } = bodySchema.parse(request.body);
-            const authUser = await (0, auth_1.signInWithEmailAndPassword)(firebase_1.firebaseAuth, email, password);
-            const userIdToken = (_a = authUser._tokenResponse) === null || _a === void 0 ? void 0 : _a.idToken;
+            const authUser = await signInWithEmailAndPassword(firebaseAuth, email, password);
+            const userIdToken = authUser._tokenResponse
+                ?.idToken;
             if (!userIdToken) {
                 throw new Error('Failed to get user id token');
             }
-            const userDoc = await firebase_1.firestore
+            const userDoc = await firestore
                 .collection('users')
                 .doc(authUser.user.uid)
                 .get();
@@ -35,4 +32,3 @@ async function login(app) {
         }
     });
 }
-exports.login = login;
