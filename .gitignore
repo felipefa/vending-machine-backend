@@ -1,4 +1,5 @@
 .env
+.firebase
 .vscode
 coverage
 dist
