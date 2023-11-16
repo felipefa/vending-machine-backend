@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { z } from 'zod';
 
-import { firebaseAuth } from '../lib/firebase';
+import { firebaseAuth, firestore } from '../lib/firebase';
 
 export async function login(app: FastifyInstance) {
   app.post('/login', async (request, reply) => {
@@ -14,15 +14,29 @@ export async function login(app: FastifyInstance) {
 
       const { email, password } = bodySchema.parse(request.body);
 
-      const user = await signInWithEmailAndPassword(
+      const authUser = await signInWithEmailAndPassword(
         firebaseAuth,
         email,
         password
       );
 
+      const userIdToken = (authUser as Record<string, any>)._tokenResponse
+        ?.idToken;
+
+      if (!userIdToken) {
+        throw new Error('Failed to get user id token');
+      }
+
+      const userDoc = await firestore
+        .collection('users')
+        .doc(authUser.user.uid)
+        .get();
+
+      const user = userDoc.data();
+
       return reply
         .status(200)
-        .send({ message: 'User successfully signed in', user });
+        .send({ message: 'User successfully signed in', user, userIdToken });
     } catch (error) {
       return reply.status(500).send({
         message: 'Failed to sign in user',
