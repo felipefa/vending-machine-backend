@@ -36,3 +36,11 @@ pnpm install
 ```bash
 pnpm run dev
 ```
+
+## How to run the tests
+
+Simply run the following command:
+
+```bash
+pnpm run test
+```
